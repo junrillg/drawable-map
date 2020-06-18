@@ -1,18 +1,14 @@
-import { getLocation } from "./map/utils";
+import * as L from 'leaflet';
+import mapInstance from "./map/mapInstance";
+import request from './lib/request';
 
-import 'leaflet';
 import 'leaflet-draw/dist/leaflet.draw-src';
 import 'leaflet-draw/dist/leaflet.draw';
 import 'leaflet-draw/dist/leaflet.draw-src.css';
 import 'leaflet/dist/leaflet.css';
 
 (async function() {
-    const position = await getLocation();
-    const osmUrl = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-    const osmAttrib = '&copy; <a href="http://openstreetmap.org/copyright">OpenStreetMap</a> contributors';
-    const osm = L.tileLayer(osmUrl, {maxZoom: 18, attribution: osmAttrib});
-
-    const map = new L.Map('map', {layers: [osm], center: new L.LatLng(position.coords.latitude, position.coords.longitude), zoom: 15});
+    const map = await mapInstance();
 
     const drawnItems = new L.FeatureGroup();
     map.addLayer(drawnItems);
@@ -33,17 +29,23 @@ import 'leaflet/dist/leaflet.css';
             remove: true
         }
     });
+
     map.addControl(drawControl);
 
-    map.on(L.Draw.Event.CREATED, function (e) {
+    map.on(L.Draw.Event.CREATED, async function (e) {
         const type = e.layerType,
             layer = e.layer;
 
         if (type === 'marker') {
             layer.bindPopup('A popup!');
         }
-
         drawnItems.addLayer(layer);
+        const url = window.location.pathname;
+        try {
+            const data = await request.put(url, drawnItems.toGeoJSON());
+        }catch(e) {
+           console.error(e);
+        }
     });
 
     map.on(L.Draw.Event.EDITED, function (e) {

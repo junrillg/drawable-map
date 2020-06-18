@@ -1,0 +1,5 @@
+<p id="notice"><%= notice %></p>
+<div id="map"></div>
+<%= link_to 'Edit', edit_map_path(@map) %> |
+<%= link_to 'Back', maps_path %>
+<%= javascript_pack_tag 'map', 'data-turbolinks-track': 'reload' %>
