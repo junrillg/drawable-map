@@ -15,7 +15,7 @@ class MapsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-  test "should create map" do
+  test "should create maps" do
     assert_difference('Map.count') do
       post maps_url, params: { map: {  } }
     end
@@ -23,7 +23,7 @@ class MapsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to map_url(Map.last)
   end
 
-  test "should show map" do
+  test "should show maps" do
     get map_url(@map)
     assert_response :success
   end
@@ -33,12 +33,12 @@ class MapsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-  test "should update map" do
+  test "should update maps" do
     patch map_url(@map), params: { map: {  } }
     assert_redirected_to map_url(@map)
   end
 
-  test "should destroy map" do
+  test "should destroy maps" do
     assert_difference('Map.count', -1) do
       delete map_url(@map)
     end

@@ -1,7 +1,6 @@
 <h1>Editing Map</h1>
-
+<div id="map"></div>
 <%= render 'form', map: @map %>
-
 <%= link_to 'Show', @map %> |
 <%= link_to 'Back', maps_path %>
-<%= javascript_pack_tag 'map', 'data-turbolinks-track': 'reload' %>
+<%= javascript_pack_tag 'maps', 'data-turbolinks-track': 'reload' %>
