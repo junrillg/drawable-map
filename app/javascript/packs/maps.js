@@ -1,13 +1,15 @@
 import * as L from 'leaflet';
 import mapInstance from './lib/mapInstance';
-import {fetchGeoJSON, updateGeoJSON} from './services/mapApi';
-import {displayToolbar} from './lib/utils';
-import get from 'lodash/get'
+import { fetchGeoJSON } from './services/mapApi';
+import { displayToolbar } from './lib/utils';
+import { mapEventOnCreate, mapEventOnEdit, mapToolbar, mapUtil } from "./lib/mapUtil";
 
 import 'leaflet-draw/dist/leaflet.draw-src';
 import 'leaflet-draw/dist/leaflet.draw';
 import 'leaflet-draw/dist/leaflet.draw-src.css';
 import 'leaflet/dist/leaflet.css';
+
+
 
 (async function() {
     const map = await mapInstance();
@@ -17,60 +19,12 @@ import 'leaflet/dist/leaflet.css';
 
     const drawnItems = new L.FeatureGroup();
     map.addLayer(drawnItems);
-    if(displayToolbar()) {
-        L.drawLocal.draw.toolbar.buttons.polygon = 'Draw polygon!';
 
-        const drawControl = new L.Control.Draw({
-            position: 'topright',
-            draw: {
-                polyline: true,
-                polygon: true,
-                circle: false,
-                circlemarker: false,
-                marker: false
-            },
-            edit: {
-                featureGroup: drawnItems,
-                remove: true
-            }
-        });
+    if(displayToolbar()) mapToolbar(drawnItems, map);
 
-        map.addControl(drawControl);
-    }
+    mapEventOnCreate(map, drawnItems, response);
 
+    mapEventOnEdit(map);
 
-    map.on(L.Draw.Event.CREATED, async function (e) {
-        const type = e.layerType,
-            layer = e.layer;
-
-        if (type === 'marker') {
-            layer.bindPopup('A popup!');
-        }
-        drawnItems.addLayer(layer);
-
-        try {
-            const geoJSON = drawnItems.toGeoJSON();
-            await updateGeoJSON({
-                ...geoJSON,
-                features: [
-                    ...geoJSON.features,
-                    ...get(response, 'data.features', [])
-                ]
-            });
-        }catch(e) {
-           console.error(e);
-        }
-    });
-
-    map.on(L.Draw.Event.EDITED, function (e) {
-        const layers = e.layers;
-        let countOfEditedLayers = 0;
-        layers.eachLayer(function (layer) {
-            countOfEditedLayers++;
-        });
-    });
-
-    L.DomUtil.get('changeColor').onclick = function () {
-        drawControl.setDrawingOptions({rectangle: {shapeOptions: {color: '#004a80'}}});
-    };
+    mapUtil();
 })();
