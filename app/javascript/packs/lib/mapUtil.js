@@ -1,7 +1,18 @@
 import * as L from "leaflet";
-import { updateGeoJSON } from "../services/mapApi";
+import {fetchGeoJSON, updateGeoJSON} from "../services/mapApi";
+import { displayToolbar } from "./utils";
+
+export async function mapGeoJson(map) {
+    const response = await fetchGeoJSON();
+    L.geoJSON(response.data).addTo(map);
+
+    const drawnItems = new L.FeatureGroup();
+    map.addLayer(drawnItems);
+    return {response, drawnItems};
+}
 
 export function mapToolbar(drawnItems, map) {
+    if(!displayToolbar()) return;
     L.drawLocal.draw.toolbar.buttons.polygon = 'Draw polygon!';
 
     const drawControl = new L.Control.Draw({
