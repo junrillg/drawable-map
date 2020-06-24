@@ -1,5 +1,11 @@
 import mapInstance from './lib/mapInstance';
-import {mapEventOnCreate, mapEventOnEdit, mapGeoJson, mapToolbar, mapUtil} from "./lib/mapUtil";
+import {
+    mapEventOnCreate,
+    mapEventOnEdit,
+    mapGeoJson,
+    mapToolbar,
+    mapUtil
+} from "./lib/mapUtil";
 
 import 'leaflet-draw/dist/leaflet.draw-src';
 import 'leaflet-draw/dist/leaflet.draw';
